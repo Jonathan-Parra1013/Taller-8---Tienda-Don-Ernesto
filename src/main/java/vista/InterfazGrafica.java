@@ -38,11 +38,36 @@ public class InterfazGrafica extends javax.swing.JFrame {
         cargarCategorias();
         cargarTablaProductos();
         
-        
+        cargarFiltroCategorias();
         TablaProductos.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 seleccionarFilaTabla();
+            }
+        });
+        
+        TablaProductos.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                final java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                try {
+                    int cantidad = Integer.parseInt(table.getValueAt(row, 3).toString());
+                    if (cantidad < 5) {
+                        c.setBackground(new java.awt.Color(255, 200, 200)); // aqui señala en rojo si su cantidas es menor a 5 :b
+                        c.setForeground(java.awt.Color.BLACK);
+                    } else {
+                        if (isSelected) {
+                            c.setBackground(table.getSelectionBackground());
+                            c.setForeground(table.getSelectionForeground());
+                        } else {
+                            c.setBackground(java.awt.Color.WHITE);
+                            c.setForeground(java.awt.Color.BLACK);
+                        }
+                    }
+                } catch (Exception e) {
+                    c.setBackground(java.awt.Color.WHITE);
+                }
+                return c;
             }
         });
     }
@@ -79,6 +104,24 @@ public class InterfazGrafica extends javax.swing.JFrame {
             modelo.addRow(fila);
         }
     }
+    
+    private void cargarFiltroCategorias() {
+        CajaFiltroCategoria.removeAllItems();
+        
+        Categoria todas = new Categoria();
+        todas.setIdCategoria(-1);
+        todas.setNombre("Todas");
+        CajaFiltroCategoria.addItem(todas);
+        
+        // aparecen las categorias de la base de datos :b
+        List<Categoria> categorias = categoriaDAO.listar();
+        for (Categoria c : categorias) {
+            
+            if (!c.getNombre().equalsIgnoreCase("Ninguno")) {
+                CajaFiltroCategoria.addItem(c);
+            }
+        }
+    }
 
    
     private void seleccionarFilaTabla() {
@@ -90,7 +133,6 @@ public class InterfazGrafica extends javax.swing.JFrame {
             TextoCantidad.setText(TablaProductos.getValueAt(fila, 3).toString());
             
             String nombreCategoria = TablaProductos.getValueAt(fila, 4).toString();
-            // Buscar la categoría en el ComboBox y seleccionarla
             for (int i = 0; i < CajaCategoria.getItemCount(); i++) {
                 Categoria c = (Categoria) CajaCategoria.getItemAt(i);
                 if (c.getNombre().equals(nombreCategoria)) {
@@ -112,6 +154,12 @@ public class InterfazGrafica extends javax.swing.JFrame {
         }
         TablaProductos.clearSelection();
     }
+    
+    public void actualizarTablaExterna() {
+
+        cargarTablaProductos();
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -142,6 +190,10 @@ public class InterfazGrafica extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         TablaProductos = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        CajaFiltroCategoria = new javax.swing.JComboBox<>();
+        jLabel8 = new javax.swing.JLabel();
+        BtnVender = new javax.swing.JButton();
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -202,6 +254,15 @@ public class InterfazGrafica extends javax.swing.JFrame {
 
         jLabel6.setText("TABLA PRODUCTOS :b");
 
+        jLabel7.setText("FILTRO");
+
+        CajaFiltroCategoria.addActionListener(this::CajaFiltroCategoriaActionPerformed);
+
+        jLabel8.setText("VENTA");
+
+        BtnVender.setText("VENDER");
+        BtnVender.addActionListener(this::BtnVenderActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -236,21 +297,34 @@ public class InterfazGrafica extends javax.swing.JFrame {
                         .addComponent(BtnLimpiar))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(21, 21, 21)
+                        .addComponent(TextoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(TextoPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(89, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(83, 83, 83)
+                        .addComponent(jLabel1))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(175, 175, 175)
+                        .addComponent(jLabel6))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(TextoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(TextoPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(34, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(83, 83, 83)
-                .addComponent(jLabel1)
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(CajaFiltroCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addGap(188, 188, 188)
+                            .addComponent(BtnVender))))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel6)
-                .addGap(175, 175, 175))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -275,11 +349,19 @@ public class InterfazGrafica extends javax.swing.JFrame {
                     .addComponent(BtnActualizar)
                     .addComponent(BtnEliminar)
                     .addComponent(BtnLimpiar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                .addComponent(jLabel6)
                 .addGap(18, 18, 18)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(CajaFiltroCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BtnVender)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -290,9 +372,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -410,11 +490,11 @@ public class InterfazGrafica extends javax.swing.JFrame {
         
         if (confirmacion == JOptionPane.YES_OPTION) {
             if (productoDAO.eliminar(idProductoSeleccionado)) {
-                JOptionPane.showMessageDialog(this, "Producto eliminado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Producto eliminado con éxito.", "exito", JOptionPane.INFORMATION_MESSAGE);
                 cargarTablaProductos();
                 limpiarFormulario();
             } else {
-                JOptionPane.showMessageDialog(this, "No se pudo eliminar el producto.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "No se pudo eliminar el producto.", "error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_BtnEliminarActionPerformed
@@ -422,6 +502,39 @@ public class InterfazGrafica extends javax.swing.JFrame {
     private void BtnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLimpiarActionPerformed
         limpiarFormulario();
     }//GEN-LAST:event_BtnLimpiarActionPerformed
+
+    private void CajaFiltroCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CajaFiltroCategoriaActionPerformed
+       if (CajaFiltroCategoria.getSelectedItem() != null) {
+        
+            Object selectedItem = CajaFiltroCategoria.getSelectedItem();
+        
+            if (selectedItem instanceof Categoria) {
+                Categoria categoriaSeleccionada = (Categoria) selectedItem;
+                int idCategoriaSeleccionada = categoriaSeleccionada.getIdCategoria();
+            
+                DefaultTableModel modelo = (DefaultTableModel) TablaProductos.getModel();
+                modelo.setRowCount(0); // se limpia la tabla
+            
+                List<Producto> productosFiltrados = productoDAO.listarPorCategoria(idCategoriaSeleccionada);
+            
+                for (Producto p : productosFiltrados) {
+                    Object[] fila = new Object[5];
+                    fila[0] = p.getIdProducto();
+                    fila[1] = p.getNombre();
+                    fila[2] = p.getPrecio();
+                    fila[3] = p.getCantidad();
+                    fila[4] = p.getCategoria().getNombre();
+                    modelo.addRow(fila);
+                }
+            }
+        }
+    }//GEN-LAST:event_CajaFiltroCategoriaActionPerformed
+
+    private void BtnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnVenderActionPerformed
+        InterfazGraficaVentas ventas = new InterfazGraficaVentas(this);
+        
+        ventas.setVisible(true);
+    }//GEN-LAST:event_BtnVenderActionPerformed
 
     /**
      * @param args the command line arguments
@@ -453,7 +566,9 @@ public class InterfazGrafica extends javax.swing.JFrame {
     private javax.swing.JButton BtnEliminar;
     private javax.swing.JButton BtnGuardar;
     private javax.swing.JButton BtnLimpiar;
+    private javax.swing.JButton BtnVender;
     private javax.swing.JComboBox<Categoria> CajaCategoria;
+    private javax.swing.JComboBox<Categoria> CajaFiltroCategoria;
     private javax.swing.JTable TablaProductos;
     private javax.swing.JTextField TextoCantidad;
     private javax.swing.JTextField TextoNombre;
@@ -464,6 +579,8 @@ public class InterfazGrafica extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;

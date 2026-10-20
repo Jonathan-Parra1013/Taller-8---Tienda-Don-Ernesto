@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 public class Conexion {
     
-    // Parámetros de conexión para XAMPP (usuario root por defecto sin contraseña)
+    
     private static final String URL = "jdbc:mysql://localhost:3306/tienda?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = ""; // Sin contraseña
@@ -26,7 +26,7 @@ public class Conexion {
         try {
             if (conexion == null || conexion.isClosed()) {
                 conexion = DriverManager.getConnection(URL, USER, PASSWORD);
-                System.out.println("¡Conexión exitosa a la base de datos!");
+                System.out.println("Conexion exitosa a la base de datos :D");
             }
         } catch (SQLException e) {
             System.err.println("Error al conectar a la base de datos: " + e.getMessage());
@@ -38,10 +38,10 @@ public class Conexion {
         try {
             if (conexion != null && !conexion.isClosed()) {
                 conexion.close();
-                System.out.println("Sesión de base de datos cerrada correctamente.");
+                System.out.println("Sesion de base de datos cerrada correctamente.");
             }
         } catch (SQLException e) {
-            System.err.println("Error al cerrar la conexión: " + e.getMessage());
+            System.err.println("Error al cerrar la conexion: " + e.getMessage());
         }
     }
 }

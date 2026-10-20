@@ -1,8 +1,0 @@
-model\Categoria.class
-com\github\jonathanparra1013\tiendadebarrio\TiendaDeBarrio.class
-vista\InterfazGrafica.class
-dao\ProductoDao.class
-model\Producto.class
-conexion\Conexion.class
-dao\CategoriaDao.class
-vista\InterfazGrafica$1.class

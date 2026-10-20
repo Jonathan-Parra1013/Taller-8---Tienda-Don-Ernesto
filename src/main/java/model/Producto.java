@@ -88,6 +88,10 @@ public class Producto {
         this.categoria = categoria;
     }
     
+    @Override
+    public String toString() {
+        return this.nombre;
+    }
     
 
     
